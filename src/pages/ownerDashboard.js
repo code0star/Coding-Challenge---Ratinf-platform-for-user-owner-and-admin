@@ -264,8 +264,8 @@ export default function OwnerDashboard() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-black/50 rounded-xl p-6 border border-gray-800">
-                <div className="flex items-center justify-between">
-                  <div>
+            <div className="flex items-center justify-between">
+              <div>
                     <p className="text-gray-400 text-sm">Average Rating</p>
                     <p className="text-2xl font-bold">
                       {selectedStore.total_rating_count > 0 
@@ -277,13 +277,13 @@ export default function OwnerDashboard() {
                 </div>
               </div>
               <div className="bg-black/50 rounded-xl p-6 border border-gray-800">
-                <div className="flex items-center justify-between">
-                  <div>
+            <div className="flex items-center justify-between">
+              <div>
                     <p className="text-gray-400 text-sm">Total Ratings</p>
                     <p className="text-2xl font-bold">{selectedStore.total_rating_count}</p>
-                  </div>
+              </div>
                   <ChartBarIcon className="h-8 w-8 text-purple-400" />
-                </div>
+          </div>
               </div>
             </div>
 
@@ -298,8 +298,8 @@ export default function OwnerDashboard() {
                   className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800 transition-all duration-200"
                 />
                 <MagnifyingGlassIcon className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
-              </div>
-            </div>
+          </div>
+        </div>
 
             {/* Ratings List */}
             <div className="bg-black/50 rounded-xl p-6 border border-gray-800">
@@ -307,33 +307,33 @@ export default function OwnerDashboard() {
                 Recent Ratings
               </h2>
               {ratings.length > 0 ? (
-                <div className="space-y-4">
+          <div className="space-y-4">
                   {ratings.map((rating) => (
                     <div key={rating.id} className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-gray-800">
-                      <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4">
                         <div className="h-10 w-10 rounded-full bg-pink-500/20 flex items-center justify-center">
                           <UsersIcon className="h-6 w-6 text-pink-400" />
-                        </div>
-                        <div>
+                  </div>
+                  <div>
                           <p className="font-medium">User Email: {rating.email}</p>
                           <p className="text-sm text-gray-400">Rating: {rating.rating}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
                         <span className="text-yellow-400">{'★'.repeat(rating.rating)}</span>
                         <span className="text-gray-400 text-sm">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </span>
-                      </div>
-                    </div>
-                  ))}
                 </div>
+              </div>
+            ))}
+          </div>
               ) : (
                 <div className="text-center py-8">
                   <p className="text-gray-400">No ratings yet for this store</p>
                 </div>
               )}
-            </div>
+        </div>
           </>
         )}
 
@@ -350,8 +350,8 @@ export default function OwnerDashboard() {
                   className="text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   <XMarkIcon className="w-6 h-6" />
-                </button>
-              </div>
+          </button>
+        </div>
 
               <form onSubmit={handleNewStoreSubmit} className="space-y-4">
                 {/* Store Name */}
@@ -447,10 +447,10 @@ export default function OwnerDashboard() {
                   </button>
                 </div>
               </form>
-            </div>
+          </div>
           </div>
         )}
       </main>
     </div>
   );
-} 
+}

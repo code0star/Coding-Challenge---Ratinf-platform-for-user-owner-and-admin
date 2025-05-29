@@ -196,15 +196,69 @@ return {
 
 export const registerUserWithRole = async (email, password, role, name, address) => {
   try {
-    // First, create the auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // First, check if user exists in the appropriate role table
+    let roleTable;
+    switch (role.toLowerCase()) {
+      case 'user':
+        roleTable = 'users';
+        break;
+      case 'owner':
+        roleTable = 'owners';
+        break;
+      case 'admin':
+        roleTable = 'admins';
+        break;
+      default:
+        throw new Error('Invalid role selected');
+    }
+
+    // Check if email already exists in the role table
+    const { data: existingUser, error: checkError } = await supabase
+      .from(roleTable)
+      .select('email')
+      .eq('email', email)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+      throw checkError;
+    }
+
+    if (existingUser) {
+      return {
+        status: 'error',
+        message: 'Email already registered. Please login instead.'
+      };
+    }
+
+    // Send magic link for email verification
+    const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
-      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?role=${role}&name=${encodeURIComponent(name)}&address=${encodeURIComponent(address)}&password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`,
+      },
     });
 
-    if (authError) throw authError;
+    if (otpError) throw otpError;
 
-    // Then, insert into the appropriate role table
+    // Show alert to check email
+    alert('Please check your email for the verification link to complete your registration.');
+
+    return {
+      status: 'pending',
+      message: 'Please check your email for the magic link to complete registration.'
+    };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return {
+      status: 'error',
+      message: error.message
+    };
+  }
+};
+
+// New function to handle the actual user insertion after email verification
+export const completeRegistration = async (email, role, name, address, password) => {
+  try {
     let roleTable;
     switch (role.toLowerCase()) {
       case 'user':
@@ -233,25 +287,75 @@ export const registerUserWithRole = async (email, password, role, name, address)
 
     if (roleError) throw roleError;
 
-    // Send magic link for email verification
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?role=${role}`,
-      },
-    });
-
-    if (otpError) throw otpError;
-
     return {
-      status: 'pending',
-      message: 'Registration successful. Please check your email for the magic link to complete verification.'
+      status: 'success',
+      message: 'Registration completed successfully.'
     };
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Registration completion error:', error);
     return {
       status: 'error',
       message: error.message
     };
+  }
+};
+
+// Add this new function to handle auth callback
+export const handleAuthCallback = async () => {
+  try {
+    // Get the URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role');
+    const name = decodeURIComponent(params.get('name'));
+    const address = decodeURIComponent(params.get('address'));
+    const password = decodeURIComponent(params.get('password'));
+
+    // Wait for the session to be established
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    // If no session, try to get the user from the URL hash
+    if (!session) {
+      const { data: { user }, error: hashError } = await supabase.auth.getUser();
+      if (hashError) throw hashError;
+      if (!user) throw new Error('No user found after magic link verification');
+      
+      // Use the email from the URL parameters if available
+      const email = params.get('email') || user.email;
+      if (!email) throw new Error('No email found for user');
+
+      // Complete the registration by inserting into the appropriate table
+      const result = await completeRegistration(email, role, name, address, password);
+
+      if (result.status === 'success') {
+        // Set a success message in localStorage
+        localStorage.setItem('registrationSuccess', 'true');
+        // Redirect to the appropriate dashboard
+        window.location.href = `/pages/${role.toLowerCase()}dashboard`;
+      } else {
+        throw new Error(result.message);
+      }
+    } else {
+      // If we have a session, proceed with the email from the session
+      const email = session.user.email;
+      if (!email) throw new Error('No user email found in session');
+
+      // Complete the registration by inserting into the appropriate table
+      const result = await completeRegistration(email, role, name, address, password);
+
+      if (result.status === 'success') {
+        // Set a success message in localStorage
+        localStorage.setItem('registrationSuccess', 'true');
+        // Redirect to the appropriate dashboard
+        window.location.href = `/pages/${role.toLowerCase()}dashboard`;
+      } else {
+        throw new Error(result.message);
+      }
+    }
+  } catch (error) {
+    console.error('Auth callback error:', error);
+    // Store error in localStorage instead of redirecting
+    localStorage.setItem('registrationError', error.message);
+    // Redirect to the appropriate dashboard or home page
+    window.location.href = '/';
   }
 };

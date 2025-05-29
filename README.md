@@ -119,6 +119,6 @@ During the development of this project, I gained valuable experience in:
 This project demonstrates my ability to build a complete web application with modern technologies. It showcases my understanding of both frontend and backend development, as well as my attention to security and user experience. The platform is scalable, maintainable, and follows industry best practices.
 
 ## Contact
-Gaurav Kaushalye 
-gauravkaushalye@gmail.com
-https://www.linkedin.com/in/gaurav-kaushalye/
+[Your Name]
+[Your Email]
+[Your LinkedIn/GitHub]

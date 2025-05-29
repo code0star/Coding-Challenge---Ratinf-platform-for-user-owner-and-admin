@@ -8,9 +8,7 @@ import {
   EnvelopeIcon,
   LockClosedIcon,
   ArrowRightIcon,
-  MapPinIcon,
-  PhoneIcon,
-  LinkIcon
+  MapPinIcon
 } from '@heroicons/react/24/solid';
 import UserDashboard from './pages/userDashboard';
 import OwnerDashboard from './pages/ownerDashboard';
@@ -22,6 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { registerUserWithRole } from './utils/auth';
 import { loginUserWithRole } from './utils/auth';
 import { validateForm } from './utils/validation';
+import AuthCallback from './pages/AuthCallback';
 
 
 
@@ -50,25 +49,30 @@ function App() {
     setLoading(true);
 
     try {
-      // Validate form data
-      const formData = {
-        name,
-        email,
-        password,
-        address
-      };
+      if (mode === 'register') {
+        // Validate form data only during registration
+        const formData = {
+          name,
+          email,
+          password,
+          address
+        };
 
-      const validationErrors = validateForm(formData);
-      if (Object.keys(validationErrors).length > 0) {
-        setError(Object.values(validationErrors)[0]); // Show first error
-        setLoading(false);
-        return;
-      }
+        const validationErrors = validateForm(formData);
+        if (Object.keys(validationErrors).length > 0) {
+          setError(Object.values(validationErrors)[0]); // Show first error
+          setLoading(false);
+          return;
+        }
 
-      if (mode === 'register' && (!email || !password || !selectedRole || !name || !address)) {
-        throw new Error('Please fill in all fields and select a role');
-      } else if (mode === 'login' && (!email || !password || !selectedRole)) {
-        throw new Error('Please fill in all fields and select a role');
+        if (!email || !password || !selectedRole || !name || !address) {
+          throw new Error('Please fill in all fields and select a role');
+        }
+      } else if (mode === 'login') {
+        // Only check if email and password are provided during login
+        if (!email || !password || !selectedRole) {
+          throw new Error('Please fill in all fields and select a role');
+        }
       }
 
       if (mode === 'login') {
@@ -99,9 +103,9 @@ function App() {
         // Register mode
         const registerResponse = await registerUserWithRole(email, password, selectedRole, name, address);
 
-        if (registerResponse.status === 'success') {
-          // After successful registration, navigate to '/'
-          navigate('/');
+        if (registerResponse.status === 'pending') {
+          setError('Please check your email for the confirmation link to complete your registration.');
+          setShowModal(false);
         } else {
           setError(registerResponse.message || 'Registration failed');
         }
@@ -120,6 +124,7 @@ function App() {
   return (
     <div className="min-h-screen bg-black text-white font-sans">
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/pages/ownerdashboard" element={<OwnerDashboard />} />
         <Route path="/pages/admindashboard" element={<AdminDashboard />} />
         <Route path="/pages/userdashboard" element={<UserDashboard />} />
@@ -161,10 +166,13 @@ function App() {
                   Get Started
                 </button>
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    setMode("register");
+                    setShowModal(true);
+                  }}
                   className="bg-black/50 hover:bg-gray-900/50 px-8 py-4 rounded-full text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-800"
                 >
-                  About Me
+                  Learn More
                 </button>
               </div>
             </div>
@@ -176,7 +184,7 @@ function App() {
                   {/* Header */}
                   <div className="flex justify-between items-center mb-8">
                     <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                      About Me 👋
+                      {mode === "login" ? "Welcome Back! 👋" : "Create Account ✨"}
                     </h2>
                     <button
                       onClick={() => setShowModal(false)}
@@ -188,56 +196,147 @@ function App() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="text-center mb-8">
-                      <h3 className="text-2xl font-bold text-white mb-2">Gaurav Kaushalye</h3>
-                      <p className="text-gray-400">Full Stack Developer</p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-gray-800">
-                        <EnvelopeIcon className="w-6 h-6 text-pink-400" />
-                        <div>
-                          <p className="text-gray-400 text-sm">Email</p>
-                          <p className="text-white">gauravkaushalye@gmail.com</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-gray-800">
-                        <PhoneIcon className="w-6 h-6 text-purple-400" />
-                        <div>
-                          <p className="text-gray-400 text-sm">Phone</p>
-                          <p className="text-white">+91 9359797970</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-gray-800">
-                        <LinkIcon className="w-6 h-6 text-blue-400" />
-                        <div>
-                          <p className="text-gray-400 text-sm">LinkedIn</p>
-                          <a 
-                            href="https://www.linkedin.com/in/gaurav-kaushalye/" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-white hover:text-blue-400 transition-colors duration-200"
-                          >
-                            linkedin.com/in/gaurav-kaushalye
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-center mt-8">
+                    {/* Role Selection */}
+                    <div className="flex gap-4">
                       <button
-                        onClick={() => {
-                          setShowModal(false);
-                          setMode("login");
-                          setShowModal(true);
-                        }}
-                        className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 px-6 py-3 rounded-full text-white font-medium transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25"
+                        onClick={() => setSelectedRole('user')}
+                        className={`flex-1 p-4 rounded-xl transition-all duration-200 ${
+                          selectedRole === 'user'
+                            ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white'
+                            : 'bg-black/50 text-gray-400 hover:text-white border border-gray-800'
+                        }`}
                       >
-                        Get Started
+                        User
+                      </button>
+                      <button
+                        onClick={() => setSelectedRole('owner')}
+                        className={`flex-1 p-4 rounded-xl transition-all duration-200 ${
+                          selectedRole === 'owner'
+                            ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white'
+                            : 'bg-black/50 text-gray-400 hover:text-white border border-gray-800'
+                        }`}
+                      >
+                        Owner
+                      </button>
+                      <button
+                        onClick={() => setSelectedRole('admin')}
+                        className={`flex-1 p-4 rounded-xl transition-all duration-200 ${
+                          selectedRole === 'admin'
+                            ? 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white'
+                            : 'bg-black/50 text-gray-400 hover:text-white border border-gray-800'
+                        }`}
+                      >
+                        Admin
                       </button>
                     </div>
+
+                    {/* Mode Switch */}
+                    <div className="flex justify-center gap-6 mb-8">
+                      <button
+                        onClick={() => setMode("login")}
+                        className={`px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                          mode === "login"
+                            ? "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white shadow-pink-500/30"
+                            : "bg-black/50 text-gray-300 hover:bg-gray-900/50 border border-gray-800"
+                        }`}
+                      >
+                        Login
+                      </button>
+                      {selectedRole !== 'admin' && (
+                        <button
+                          onClick={() => setMode("register")}
+                          className={`px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                            mode === "register"
+                              ? "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white shadow-pink-500/30"
+                              : "bg-black/50 text-gray-300 hover:bg-gray-900/50 border border-gray-800"
+                          }`}
+                        >
+                          Register
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Login/Register Form */}
+                    <form onSubmit={handleAuth} className="space-y-4">
+                      {mode === 'register' && (
+                        <>
+                          <div className="relative">
+                            <UserIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <input
+                              type="text"
+                              placeholder="Full Name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
+                            />
+                          </div>
+                          <div className="relative">
+                            <MapPinIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <input
+                              type="text"
+                              placeholder="Address"
+                              value={address}
+                              onChange={(e) => setAddress(e.target.value)}
+                              className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
+                            />
+                          </div>
+                        </>
+                      )}
+                      <div className="relative">
+                        <EnvelopeIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="email"
+                          placeholder="Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
+                        />
+                      </div>
+                      <div className="relative">
+                        <LockClosedIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
+                        />
+                      </div>
+
+                      {error && (
+                        <div className="p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-200 flex items-center gap-2">
+                          <XMarkIcon className="w-5 h-5" />
+                          {error}
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 px-6 py-4 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <>
+                            {`${mode === "login" ? "Login" : "Register"} as ${selectedRole}`}
+                            <ArrowRightIcon className="w-5 h-5" />
+                          </>
+                        )}
+                      </button>
+
+                      {selectedRole !== 'admin' && (
+                        <div className="text-center">
+                          <button
+                            type="button"
+                            onClick={() => setMode(mode === "login" ? "register" : "login")}
+                            className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                          >
+                            {mode === "login" ? "Need an account? Register" : "Already have an account? Login"}
+                          </button>
+                        </div>
+                      )}
+                    </form>
                   </div>
                 </div>
               </div>
