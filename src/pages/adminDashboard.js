@@ -298,7 +298,7 @@ export default function AdminDashboard() {
           <div className="bg-black/50 rounded-xl p-6 border border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Users</p>
+                <p className="text-gray-400 text-sm">Total Readers</p>
                 <p className="text-2xl font-bold">{stats.totalUsers}</p>
               </div>
               <UserGroupIcon className="h-8 w-8 text-pink-400" />
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
           <div className="bg-black/50 rounded-xl p-6 border border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Stores</p>
+                <p className="text-gray-400 text-sm">Total Books</p>
                 <p className="text-2xl font-bold">{stats.totalStores}</p>
               </div>
               <BuildingOfficeIcon className="h-8 w-8 text-purple-400" />
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
                 : 'bg-black/50 text-gray-400 hover:text-white'
             }`}
           >
-            Users
+            Reader
           </button>
           <button
             onClick={() => setActiveTab('stores')}
@@ -344,7 +344,7 @@ export default function AdminDashboard() {
                 : 'bg-black/50 text-gray-400 hover:text-white'
             }`}
           >
-            Stores
+            Books
           </button>
         </div>
 
@@ -366,7 +366,7 @@ export default function AdminDashboard() {
               className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 px-6 py-4 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25 flex items-center gap-2"
             >
               <PlusIcon className="w-5 h-5" />
-              Add User
+              Add Reader
             </button>
           )}
           {activeTab === 'stores' && (
@@ -375,7 +375,7 @@ export default function AdminDashboard() {
               className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 px-6 py-4 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25 flex items-center gap-2"
             >
               <PlusIcon className="w-5 h-5" />
-              Add Store
+              Add Book
             </button>
           )}
         </div>
@@ -452,7 +452,7 @@ export default function AdminDashboard() {
             <div className="bg-black p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-800">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                  Add New User 👤
+                  Add New Reader 👤
                 </h2>
                 <button
                   onClick={() => setShowNewUserModal(false)}
@@ -518,8 +518,8 @@ export default function AdminDashboard() {
                     required
                     className="w-full p-3 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
                   >
-                    <option value="user">Normal User</option>
-                    <option value="owner">Store Owner</option>
+                    <option value="user">Normal Reader</option>
+                    <option value="owner">Book Owner</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
@@ -552,7 +552,7 @@ export default function AdminDashboard() {
             <div className="bg-black p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-800">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                  Add New Store 🏪
+                  Add New Book 📚
                 </h2>
                 <button
                   onClick={() => setShowNewStoreModal(false)}
@@ -567,7 +567,7 @@ export default function AdminDashboard() {
                   <BuildingOfficeIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Store Name"
+                    placeholder="Book Name"
                     value={newStore.name}
                     onChange={(e) => setNewStore({ ...newStore, name: e.target.value })}
                     required
@@ -579,7 +579,7 @@ export default function AdminDashboard() {
                   <EnvelopeIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="email"
-                    placeholder="Store Email"
+                    placeholder="Author Email"
                     value={newStore.email}
                     onChange={(e) => setNewStore({ ...newStore, email: e.target.value })}
                     required
@@ -588,10 +588,10 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="relative">
-                  <MapPinIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  
                   <input
                     type="text"
-                    placeholder="Address"
+                    placeholder="Joundra"
                     value={newStore.address}
                     onChange={(e) => setNewStore({ ...newStore, address: e.target.value })}
                     required
@@ -613,7 +613,7 @@ export default function AdminDashboard() {
                     type="submit"
                     className="px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25"
                   >
-                    Add Store
+                    Add Book
                   </button>
                 </div>
               </form>

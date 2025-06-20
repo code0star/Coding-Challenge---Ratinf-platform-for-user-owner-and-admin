@@ -35,6 +35,7 @@ export default function OwnerDashboard() {
   const [newStore, setNewStore] = useState({
     name: '',
     address: '',
+    email: '', // Assuming email is required for the store
     total_rating_count: 0,
     total_rating_sum: 0
   });
@@ -147,7 +148,7 @@ export default function OwnerDashboard() {
       }
 
       const { error } = await supabase
-        .from('stores')
+        .from('store')
         .insert([
           {
             name: newStore.name,
@@ -201,7 +202,7 @@ export default function OwnerDashboard() {
             <div className="flex items-center">
               <BuildingOfficeIcon className="h-8 w-8 text-pink-400" />
               <h1 className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                Owner Dashboard ✨
+              author's Dashboard ✨
               </h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -243,7 +244,7 @@ export default function OwnerDashboard() {
             }}
             className="flex-1 p-4 rounded-xl bg-black/50 text-white border border-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500"
           >
-            <option value="">Select a store</option>
+            <option value="">Select a Book</option>
             {stores.map(store => (
               <option key={store.id} value={store.id}>
                 {store.name}
@@ -255,7 +256,7 @@ export default function OwnerDashboard() {
             className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 px-6 py-4 rounded-xl text-white font-medium transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25 flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
-            Add New Store
+            Add New Book
           </button>
         </div>
 
@@ -343,7 +344,7 @@ export default function OwnerDashboard() {
             <div className="bg-black p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-800">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                  Add New Store 🏪
+                  Add New Book 🏪
                 </h2>
                 <button
                   onClick={() => setShowNewStoreModal(false)}
@@ -359,20 +360,44 @@ export default function OwnerDashboard() {
                   <BuildingOfficeIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Store Name"
+                    placeholder="Book Name"
                     value={newStore.name}
                     onChange={(e) => setNewStore({ ...newStore, name: e.target.value })}
                     required
                     className="w-full p-3 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
                   />
                 </div>
-
+{/* Email */}
+<div className="relative">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M16 12H8m8 0l-8-8m8 8l-8 8"
+    />
+  </svg>
+  <input
+    type="email"
+    placeholder="example@email.com"
+    value={newStore.email}
+    onChange={(e) => setNewStore({ ...newStore, email: e.target.value })}
+    required
+    className="w-full p-3 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800"
+  />
+</div>
                 {/* Address */}
                 <div className="relative">
                   <MapPinIcon className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Address"
+                    placeholder="Joundra"
                     value={newStore.address}
                     onChange={(e) => setNewStore({ ...newStore, address: e.target.value })}
                     required
@@ -394,7 +419,7 @@ export default function OwnerDashboard() {
                     type="submit"
                     className="px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white transition-all duration-200 hover:shadow-lg hover:shadow-pink-500/25"
                   >
-                    Add Store
+                    Add Book
                   </button>
                 </div>
               </form>

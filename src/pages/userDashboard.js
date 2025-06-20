@@ -205,7 +205,7 @@ const onLogout = async () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                User Dashboard ✨
+              Reader Dashboard ✨
               </h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -234,7 +234,7 @@ const onLogout = async () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search stores by name or address... 🔍"
+              placeholder="Search books by name... 🔍"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full p-4 pl-12 rounded-xl bg-black/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 border border-gray-800 transition-all duration-200"

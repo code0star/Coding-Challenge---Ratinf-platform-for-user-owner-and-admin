@@ -153,7 +153,7 @@ function App() {
                 Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Rate & Review</span>
               </h1>
               <p className="text-gray-300 text-xl max-w-2xl leading-relaxed font-light">
-                A next-gen platform that allows users, owners, and admins to manage, rate, and review shops seamlessly. Join now and experience the change!
+                A next-gen platform that allows readers, authors, and admins to manage, rate, and review books seamlessly. Join now and experience the change!
               </p>
               <div className="mt-8 flex gap-4">
                 <button
@@ -206,7 +206,7 @@ function App() {
                             : 'bg-black/50 text-gray-400 hover:text-white border border-gray-800'
                         }`}
                       >
-                        User
+                        Reader
                       </button>
                       <button
                         onClick={() => setSelectedRole('owner')}
@@ -216,7 +216,7 @@ function App() {
                             : 'bg-black/50 text-gray-400 hover:text-white border border-gray-800'
                         }`}
                       >
-                        Owner
+                        authors
                       </button>
                       <button
                         onClick={() => setSelectedRole('admin')}
